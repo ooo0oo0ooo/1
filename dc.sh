@@ -11,9 +11,11 @@ sudo chmod +x /usr/local/bin/docker-compose
 echo "安装完成,docker版本是"
 echo "-------------------"
 docker -v  && docker-compose --version
+
 echo "设置开机自动启动及IP6"
 echo "复制下列信息并粘贴...."
-echo "
+cd /etc || cd etc
+cd docker && echo "
          -----------------------------
       {
           "log-driver": "json-file",
@@ -27,5 +29,6 @@ echo "
           "ip6tables":true
       }
           -----------------------------"
-    systemctl enable docker  && vim etc/docker/daemon.json
-    systemctl restart docker || echo "安装失败！" 1>&2
+    read -p "复制后回车"
+    vim etc/docker/daemon.json
+    systemctl enable docker  && systemctl restart docker
