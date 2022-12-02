@@ -1,6 +1,8 @@
 #!/bin/bash
-git clone https://github.com/lyzs90/vuewp.git && cd vuewp
-npm install && docker-compose up -d
+git clone https://github.com/lyzs90/vuewp.git 
+cd vuewp 
+npm install || apt install npm
+docker-compose up -d
 docker-machine ip && cp .env.example  .env
 echo "
   运行 http://container-ip:8000 进行安装;http://localhost:8080 浏览;
