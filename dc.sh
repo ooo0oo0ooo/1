@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #开始
-echo -n "国内服务器安装请按1,国外请按2,一键安装请按3"
+echo -n "国外请按1,国内请按2,一键安装请按3,所以你的选择是"
 read shuzi
 case  "$shuzi" in
   1 )
@@ -9,12 +9,13 @@ case  "$shuzi" in
     wget -qO- get.docker.com | bash
     sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-    echo "安装完成,docker版本"
+    echo "安装完成,docker版本是"
+    echo "-------------------"
     docker -v  && docker-compose --version
-    if [ "$?" = "0" ]; then
-      echo "设置开机自动启动及IP6"
-      systemctl enable docker  # 设置开机自动启动
-      cat > /etc/docker/daemon.json <<EOF
+    echo "设置开机自动启动及IP6"
+    echo "复制下列信息并粘贴...."
+    echo "
+         -----------------------------
       {
           "log-driver": "json-file",
           "log-opts": {
@@ -26,41 +27,12 @@ case  "$shuzi" in
           "experimental":true,
           "ip6tables":true
       }
-      EOF
-      systemctl restart docker
-    else
-      echo "安装失败！" 1>&2
-      exit 1
-  fi
+          -----------------------------"
+    systemctl enable docker  && vim etc/docker/daemon.json
+    systemctl restart docker || echo "安装失败！" 1>&2
   ;;
   2 )
     echo "开始安装docker..."
-    curl -sSL https://get.daocloud.io/docker | sh
-    curl -L https://get.daocloud.io/docker/compose/releases/download/v2.1.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
-    echo "安装完成,docker版本"
-    docker -v  && docker-compose --version
-    if [ "$?" = "0" ]; then
-      echo "设置开机自动启动及IP6"
-      systemctl enable docker  # 设置开机自动启动
-      cat > /etc/docker/daemon.json <<EOF
-      {
-          "log-driver": "json-file",
-          "log-opts": {
-              "max-size": "20m",
-              "max-file": "3"
-          },
-          "ipv6": true,
-          "fixed-cidr-v6": "fd00:dead:beef:c0::/80",
-          "experimental":true,
-          "ip6tables":true
-      }
-      EOF
-      systemctl restart docker
-    else
-      echo "安装失败！" 1>&2
-      exit 1
-    fi
   ;;
   3 )
     chmod +x d.sh && ./d.sh
